@@ -1,14 +1,18 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/hzxiao/goutil"
 	"github.com/hzxiao/goutil/log"
 	"github.com/hzxiao/neo-thinsdk-go/neo"
+	"github.com/hzxiao/neo-thinsdk-go/utils"
 	"github.com/spf13/pflag"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 const version = "0.0.1"
@@ -69,6 +73,9 @@ func start(network string, argFile string) error {
 			N:     uint16(arg.GetInt64("n")),
 		}
 
+		if strings.HasPrefix(utxo.Hash, "0x") {
+			utxo.Hash = utxo.Hash[2:]
+		}
 		txParam.Utxos = append(txParam.Utxos, utxo)
 	}
 
@@ -85,12 +92,13 @@ func start(network string, argFile string) error {
 		txType = neo.ContractTransaction
 	}
 
-	raw, err := neo.CreateTx(txType, txParam)
+	body, raw, err := neo.CreateTx(txType, txParam)
 	if err != nil {
 		return err
 	}
-	println(raw)
 
+	fmt.Printf("txid: 0x%v\n", computeTxid(body))
+	fmt.Printf("tx raw: %v\n", raw)
 	return nil
 }
 
@@ -98,4 +106,30 @@ func jsonDecode(buf []byte) (goutil.Map, error) {
 	var data = goutil.Map{}
 	err := json.Unmarshal(buf, &data)
 	return data, err
+}
+
+func computeTxid(body string) string {
+	re := hexlify(string(hash256(unhexlify(body))))
+
+	b, _ := utils.ToBytes(re)
+
+	return utils.ToHexString(utils.BytesReverse(b))
+}
+
+func hash256(str string) []byte {
+	s := sha256.New()
+	s.Write([]byte(str))
+	res := s.Sum(nil)
+	s.Reset()
+	s.Write(res)
+	return s.Sum(nil)
+}
+
+func hexlify(str string) string {
+	return hex.EncodeToString([]byte(str))
+}
+
+func unhexlify(str string) string {
+	b, _ := hex.DecodeString(str)
+	return string(b)
 }
