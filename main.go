@@ -9,6 +9,7 @@ import (
 	"github.com/hzxiao/goutil/log"
 	"github.com/hzxiao/neo-thinsdk-go/neo"
 	"github.com/hzxiao/neo-thinsdk-go/utils"
+	"github.com/hzxiao/neotx/req"
 	"github.com/spf13/pflag"
 	"io/ioutil"
 	"os"
@@ -22,6 +23,7 @@ var (
 	help    = pflag.BoolP("help", "h", false, "show usage of neotx command")
 	network = pflag.StringP("net", "n", "testnet", "give a network(testnet|mainnet) of neo")
 	arg     = pflag.StringP("arg", "a", "arg.json", "a json format file is arg for creating a neo tx")
+	send    = pflag.BoolP("send", "s", false, "send rpc request to neo node")
 )
 
 func main() {
@@ -35,7 +37,7 @@ func main() {
 		pflag.Usage()
 		os.Exit(0)
 	}
-
+	req.SetNetwork(*network, "")
 	err := start(*network, *arg)
 	if err != nil {
 		log.Error("[main] start err: %v", err)
@@ -85,9 +87,7 @@ func start(network string, argFile string) error {
 	if typ == "InvocationTransaction" {
 		invo := arg.GetMap("invocation")
 		txParam.Data = neo.InvocationToScript(invo.GetString("contract"), arg.GetString("operation"), arg.GetArray("params"))
-
 		txType = neo.InvocationTransaction
-
 	} else {
 		txType = neo.ContractTransaction
 	}
@@ -99,6 +99,15 @@ func start(network string, argFile string) error {
 
 	fmt.Printf("txid: 0x%v\n", computeTxid(body))
 	fmt.Printf("tx raw: %v\n", raw)
+
+	if *send {
+		fmt.Printf("send raw tx to network(%v) node(%v)...\n", network, req.Node)
+		err = req.SendRawTransaction(raw)
+		if err != nil {
+			return fmt.Errorf("send raw tx err: %v", err)
+		}
+		fmt.Printf("send success\n")
+	}
 	return nil
 }
 
