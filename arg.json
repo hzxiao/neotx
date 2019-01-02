@@ -1,23 +1,18 @@
 {
-    "version":0,
-    "type":"InvocationTransaction1",
-    "input": [
-        {
-            "hash": "0x1aaa92ad08c7ee2b8f67d76cde4893096ccafcaa1703507cec3d5ed087368b45",
-            "value": 500000000,
-            "n": 0
-        }
-    ],
-    "invocation":{
-        "contract":"3805440cffa83a7d9509b1520e754a59a3ec579e",
+    "version": 1,
+    "type": "InvocationTransaction",
+    "input": [{
+        "hash": "0x76aaa3dc1b92f51c3f49c8e55ef89aeefc7f841191d13a06266bbf131d92a4a1",
+        "n": 0
+    }],
+    "invocation": {
+        "contract": "3805440cffa83a7d9509b1520e754a59a3ec579e",
         "operation": "mintTokens",
-        "params": [
-
-        ]
+        "params": []
     },
-    "from":"AGHdThQFJs5kixWuXkgRsbNKz2LrDYDaQB",
-    "fromPriKey":"Kxe1xrnDphp9xig2X9pVE5LBMzkWgH4Qbsjy2ti98XibUXzUx5E5",
-    "to":"AGHdThQFJs5kixWuXkgRsbNKz2LrDYDaQB",
-    "assetId":"e13440dccae716e16fc01adb3c96169d2d08d16581cad0ced0b4e193c472eac1",
+    "from": "AGHdThQFJs5kixWuXkgRsbNKz2LrDYDaQB",
+    "fromPriKey": "Kxe1xrnDphp9xig2X9pVE5LBMzkWgH4Qbsjy2ti98XibUXzUx5E5",
+    "to": "ALt5o7ifhQFa2UQG7GZ1xqM1beZ3kUipkH",
+    "assetId": "e13440dccae716e16fc01adb3c96169d2d08d16581cad0ced0b4e193c472eac1",
     "value": 100000000
 }

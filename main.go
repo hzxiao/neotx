@@ -21,7 +21,8 @@ const version = "0.0.1"
 var (
 	ver     = pflag.BoolP("version", "v", false, "print version")
 	help    = pflag.BoolP("help", "h", false, "show usage of neotx command")
-	network = pflag.StringP("net", "n", "testnet", "give a network(testnet|mainnet) of neo")
+	network = pflag.StringP("net", "n", "testnet", "give a network(testnet|mainnet|prinet) of neo")
+	node    = pflag.StringP("node", "d", "", "give a node of neo if necessary. it is necessary when network is prinet")
 	arg     = pflag.StringP("arg", "a", "arg.json", "a json format file is arg for creating a neo tx")
 	send    = pflag.BoolP("send", "s", false, "send rpc request to neo node")
 )
@@ -37,8 +38,12 @@ func main() {
 		pflag.Usage()
 		os.Exit(0)
 	}
-	req.SetNetwork(*network, "")
-	err := start(*network, *arg)
+	err := req.SetNetwork(*network, *node)
+	if err != nil {
+		log.Error("[main] set network err: %v", err)
+		os.Exit(1)
+	}
+	err = start(*network, *arg)
 	if err != nil {
 		log.Error("[main] start err: %v", err)
 		os.Exit(1)
@@ -46,10 +51,6 @@ func main() {
 }
 
 func start(network string, argFile string) error {
-	if network != "testnet" && network != "mainnet" {
-		return fmt.Errorf("unknown network of neo")
-	}
-
 	buf, err := ioutil.ReadFile(argFile)
 	if err != nil {
 		return err
@@ -70,14 +71,21 @@ func start(network string, argFile string) error {
 
 	for _, input := range arg.GetMapArray("input") {
 		utxo := neo.Utxo{
-			Hash:  input.GetString("hash"),
-			Value: uint64(arg.GetInt64("value")),
-			N:     uint16(arg.GetInt64("n")),
+			Hash: input.GetString("hash"),
+			N:    uint16(arg.GetInt64("n")),
 		}
 
 		if strings.HasPrefix(utxo.Hash, "0x") {
 			utxo.Hash = utxo.Hash[2:]
 		}
+		utxo.Value, err = req.GetUtxoOutputValue(utxo.Hash, int(utxo.N))
+		if err != nil {
+			log.Error("[start] get utxo output err: %v", err)
+		}
+		if utxo.Value == 0 {
+			log.Warn("input(%v, %v) value is zero", utxo.Hash, utxo.N)
+		}
+		utxo.Value = utxo.Value * 100000000
 		txParam.Utxos = append(txParam.Utxos, utxo)
 	}
 
@@ -97,16 +105,16 @@ func start(network string, argFile string) error {
 		return err
 	}
 
-	fmt.Printf("txid: 0x%v\n", computeTxid(body))
-	fmt.Printf("tx raw: %v\n", raw)
+	log.Info("txid: 0x%v", computeTxid(body))
+	log.Info("tx raw: %v", raw)
 
 	if *send {
-		fmt.Printf("send raw tx to network(%v) node(%v)...\n", network, req.Node)
+		log.Info("send raw tx to network(%v) node(%v)...", network, req.Node)
 		err = req.SendRawTransaction(raw)
 		if err != nil {
 			return fmt.Errorf("send raw tx err: %v", err)
 		}
-		fmt.Printf("send success\n")
+		log.Info("send success")
 	}
 	return nil
 }
