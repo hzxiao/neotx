@@ -67,17 +67,20 @@ func start(network string, argFile string) error {
 	txParam.From = arg.GetString("from")
 	txParam.To = arg.GetString("to")
 	txParam.AssetId = arg.GetString("assetId")
-	txParam.Value = uint64(arg.GetInt64("value"))
+
+	factor := uint64(arg.GetInt64("factor"))
+	txParam.Value = uint64(arg.GetInt64("value")) * factor
 
 	for _, input := range arg.GetMapArray("input") {
 		utxo := neo.Utxo{
 			Hash: input.GetString("hash"),
-			N:    uint16(arg.GetInt64("n")),
+			N:    uint16(input.GetInt64("n")),
 		}
 
 		if strings.HasPrefix(utxo.Hash, "0x") {
 			utxo.Hash = utxo.Hash[2:]
 		}
+		fmt.Println(utxo.N)
 		utxo.Value, err = req.GetUtxoOutputValue(utxo.Hash, int(utxo.N))
 		if err != nil {
 			log.Error("[start] get utxo output err: %v", err)
@@ -85,7 +88,7 @@ func start(network string, argFile string) error {
 		if utxo.Value == 0 {
 			log.Warn("input(%v, %v) value is zero", utxo.Hash, utxo.N)
 		}
-		utxo.Value = utxo.Value * 100000000
+		utxo.Value = utxo.Value * factor
 		txParam.Utxos = append(txParam.Utxos, utxo)
 	}
 
@@ -94,7 +97,7 @@ func start(network string, argFile string) error {
 	var txType byte
 	if typ == "InvocationTransaction" {
 		invo := arg.GetMap("invocation")
-		txParam.Data = neo.InvocationToScript(invo.GetString("contract"), arg.GetString("operation"), arg.GetArray("params"))
+		txParam.Data = neo.InvocationToScript(invo.GetString("contract"), invo.GetString("operation"), invo.GetArray("params"))
 		txType = neo.InvocationTransaction
 	} else {
 		txType = neo.ContractTransaction

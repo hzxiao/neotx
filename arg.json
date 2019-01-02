@@ -2,8 +2,8 @@
     "version": 1,
     "type": "InvocationTransaction",
     "input": [{
-        "hash": "0x76aaa3dc1b92f51c3f49c8e55ef89aeefc7f841191d13a06266bbf131d92a4a1",
-        "n": 0
+        "hash": "0x943d00a741f7be1b5946e5b9891ada4c8142db5de221516c50864af9a614a8fb",
+        "n": 1
     }],
     "invocation": {
         "contract": "3805440cffa83a7d9509b1520e754a59a3ec579e",
@@ -14,5 +14,6 @@
     "fromPriKey": "Kxe1xrnDphp9xig2X9pVE5LBMzkWgH4Qbsjy2ti98XibUXzUx5E5",
     "to": "ALt5o7ifhQFa2UQG7GZ1xqM1beZ3kUipkH",
     "assetId": "e13440dccae716e16fc01adb3c96169d2d08d16581cad0ced0b4e193c472eac1",
-    "value": 100000000
+    "value": 1,
+    "factor": 100000000
 }
