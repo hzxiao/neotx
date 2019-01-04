@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/sha256"
+	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -14,6 +15,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 )
 
 const version = "0.0.1"
@@ -73,14 +75,13 @@ func start(network string, argFile string) error {
 
 	for _, input := range arg.GetMapArray("input") {
 		utxo := neo.Utxo{
-			Hash: input.GetString("hash"),
-			N:    uint16(input.GetInt64("n")),
+			Hash: input.GetString("prevHash"),
+			N:    uint16(input.GetInt64("prevIndex")),
 		}
 
 		if strings.HasPrefix(utxo.Hash, "0x") {
 			utxo.Hash = utxo.Hash[2:]
 		}
-		fmt.Println(utxo.N)
 		utxo.Value, err = req.GetUtxoOutputValue(utxo.Hash, int(utxo.N))
 		if err != nil {
 			log.Error("[start] get utxo output err: %v", err)
@@ -92,6 +93,20 @@ func start(network string, argFile string) error {
 		txParam.Utxos = append(txParam.Utxos, utxo)
 	}
 
+	if len(txParam.Utxos) == 0 {
+		hash, _ := neo.GetPublicKeyHashFromAddress(txParam.From)
+		txParam.Attrs = append(txParam.Attrs, neo.Attribute{
+			Usage: neo.Script,
+			Data:  hash,
+		})
+	}
+	now := time.Now().Local().UnixNano() / 1e6
+	b := make([]byte, 8)
+	binary.BigEndian.PutUint64(b, uint64(now))
+	txParam.Attrs = append(txParam.Attrs, neo.Attribute{
+		Usage: neo.Remark,
+		Data:  b,
+	})
 	//
 	typ := arg.GetString("type")
 	var txType byte
@@ -108,8 +123,9 @@ func start(network string, argFile string) error {
 		return err
 	}
 
+	log.Info("tx body: %v", body)
 	log.Info("txid: 0x%v", computeTxid(body))
-	log.Info("tx raw: %v", raw)
+	log.Info("tx raw:  %v", raw)
 
 	if *send {
 		log.Info("send raw tx to network(%v) node(%v)...", network, req.Node)

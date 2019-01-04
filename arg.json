@@ -1,19 +1,20 @@
 {
     "version": 1,
     "type": "InvocationTransaction",
-    "input": [{
-        "hash": "0x943d00a741f7be1b5946e5b9891ada4c8142db5de221516c50864af9a614a8fb",
-        "n": 1
-    }],
+    "input": [],
     "invocation": {
         "contract": "3805440cffa83a7d9509b1520e754a59a3ec579e",
-        "operation": "mintTokens",
-        "params": []
+        "operation": "transfer",
+        "params": [
+            "(address)AGHdThQFJs5kixWuXkgRsbNKz2LrDYDaQB",
+            "(address)AWD7ju8oWGUMfpisa2ttFW6vEJYjdxSpZD",
+            "(integer)300000000"
+        ]
     },
     "from": "AGHdThQFJs5kixWuXkgRsbNKz2LrDYDaQB",
     "fromPriKey": "Kxe1xrnDphp9xig2X9pVE5LBMzkWgH4Qbsjy2ti98XibUXzUx5E5",
-    "to": "ALt5o7ifhQFa2UQG7GZ1xqM1beZ3kUipkH",
+    "to": "AWD7ju8oWGUMfpisa2ttFW6vEJYjdxSpZD",
     "assetId": "e13440dccae716e16fc01adb3c96169d2d08d16581cad0ced0b4e193c472eac1",
-    "value": 1,
+    "value": 100,
     "factor": 100000000
 }
