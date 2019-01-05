@@ -1,7 +1,12 @@
 {
     "version": 1,
     "type": "InvocationTransaction",
-    "input": [],
+    "input": [
+        {
+            "prevHash":"0x475fc8fb2b96b1ac6130d31cba20c7ecaf9b4d2d25c81314f2901f9c39479d31",
+            "prevIndex": 0
+        }
+    ],
     "invocation": {
         "contract": "3805440cffa83a7d9509b1520e754a59a3ec579e",
         "operation": "transfer",

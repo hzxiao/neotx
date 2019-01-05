@@ -1,6 +1,6 @@
 export PATH := $(GOPATH)/bin:$(PATH)
 
-version = 0.0.1
+version = 0.0.2
 app = neotx
 
 fmt:
