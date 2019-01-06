@@ -56,9 +56,24 @@ go get -u github.com/hzxiao/neotx
 ## create tx and print saw tx
 neotx --arg arg.json
 
-## create tx and send to neo node
+## create tx and send to testnet neo node
 neotx --arg arg.json --send 
+
+## crate tx and send to mainnet neo node
+neotx --arg arg.json --net mainneet --send 
 
 ## create tx and send to private neo network
 neotx --arg arg.json --send --net prinet --node http://localhost:20332
+```
+
+## Complete Command Line
+
+```
+Usage of neotx:
+  -a, --arg string    a json format file is arg for creating a neo tx (default "arg.json")
+  -h, --help          show usage of neotx command
+  -n, --net string    give a network(testnet|mainnet|prinet) of neo (default "testnet")
+  -d, --node string   give a node of neo if necessary. it is necessary when network is prinet
+  -s, --send          send rpc request to neo node
+  -v, --version       print version
 ```
