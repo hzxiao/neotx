@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-const version = "0.0.2"
+const version = "0.0.3"
 
 var (
 	ver     = pflag.BoolP("version", "v", false, "print version")
@@ -93,8 +93,16 @@ func start(network string, argFile string) error {
 		txParam.Utxos = append(txParam.Utxos, utxo)
 	}
 
-	if len(txParam.Utxos) == 0 {
-		hash, _ := neo.GetPublicKeyHashFromAddress(txParam.From)
+	hash, _ := neo.GetPublicKeyHashFromAddress(txParam.From)
+	txParam.Attrs = append(txParam.Attrs, neo.Attribute{
+		Usage: neo.Script,
+		Data:  hash,
+	})
+
+	txParam.DoubleSign = arg.GetBool("doubleSign")
+	txParam.ToPriKey = arg.GetString("toPriKey")
+	if txParam.DoubleSign {
+		hash, _ := neo.GetPublicKeyHashFromAddress(txParam.To)
 		txParam.Attrs = append(txParam.Attrs, neo.Attribute{
 			Usage: neo.Script,
 			Data:  hash,
@@ -107,7 +115,7 @@ func start(network string, argFile string) error {
 		Usage: neo.Remark,
 		Data:  b,
 	})
-	//
+
 	typ := arg.GetString("type")
 	var txType byte
 	if typ == "InvocationTransaction" {

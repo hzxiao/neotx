@@ -3,13 +3,13 @@
     "type": "InvocationTransaction",
     "input": [
         {
-            "prevHash":"0x475fc8fb2b96b1ac6130d31cba20c7ecaf9b4d2d25c81314f2901f9c39479d31",
-            "prevIndex": 0
+            "prevHash":"0xba2c461d4c5490f07693a2618864ccf34de4d8d3a11467a313408cea3986df13",
+            "prevIndex": 1
         }
     ],
     "invocation": {
         "contract": "3805440cffa83a7d9509b1520e754a59a3ec579e",
-        "operation": "transfer",
+        "operation": "mintTokens",
         "params": [
             "(address)AGHdThQFJs5kixWuXkgRsbNKz2LrDYDaQB",
             "(address)AWD7ju8oWGUMfpisa2ttFW6vEJYjdxSpZD",

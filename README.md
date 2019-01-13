@@ -43,11 +43,13 @@ go get -u github.com/hzxiao/neotx
         ]
     },
     "from": "AGHdThQFJs5kixWuXkgRsbNKz2LrDYDaQB",
-    "fromPriKey": "Kxe1xrnDphp9xig2X9pVE5LBMzkWgH4Qbsjy2ti98XibUXzUx5E5",
+    "fromPriKey": "",
     "to": "AWD7ju8oWGUMfpisa2ttFW6vEJYjdxSpZD",
+    "toPriKey":"",
     "assetId": "e13440dccae716e16fc01adb3c96169d2d08d16581cad0ced0b4e193c472eac1",
     "value": 100,
-    "factor": 100000000
+    "factor": 100000000,
+    "doubleSign": true
 }
 ```
 
